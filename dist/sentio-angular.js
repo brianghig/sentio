@@ -1,4 +1,4 @@
-/*! sentio Version: 0.2.4 */
+/*! sentio Version: 0.2.5 */
 angular.module('sentio', []);
 angular.module('sentio.realtime', []);
 angular.module('sentio.realtime').directive('sentioRtTimeline', function($document, $window, $timeout, $log) {
@@ -59,7 +59,7 @@ angular.module('sentio.realtime').directive('sentioRtTimeline', function($docume
 			scope.$watchCollection('markers', function(n, o){
 				if(null == o && null == n){ return; }
 
-				timeline.markers(n);
+				timeline.markers(n).redraw();
 			});
 
 			scope.$watch('interval', function(n, o){
@@ -142,6 +142,9 @@ angular.module('sentio.realtime').directive('sentioRtTimeline', function($docume
 			scope.$on('$destroy', function () {
 				window.off('resize', delayResize);
 			});
+			scope.$on('$destroy', function() {
+				timeline.stop();
+			});
 		}
 	};
 });
@@ -153,6 +156,7 @@ angular.module('sentio').directive('sentioTimeline', function($document, $window
 		restrict : 'A',
 		scope : {
 			model: '=sentioModel',
+			markers: '=sentioMarkers',
 			yExtent: '=sentioYExtent',
 			xExtent: '=sentioXExtent',
 			duration: '=sentioDuration',
@@ -203,6 +207,12 @@ angular.module('sentio').directive('sentioTimeline', function($document, $window
 				if(null == o && null == n){ return; }
 
 				timeline.data(n).redraw();
+			});
+			
+			scope.$watchCollection('markers', function(n, o){
+				if(null == o && null == n){ return; }
+
+				timeline.markers(n).redraw();
 			});
 
 			scope.$watchCollection('yExtent', function(n, o){
