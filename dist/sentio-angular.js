@@ -1,4 +1,4 @@
-/*! sentio Version: 0.2.5 */
+/*! sentio Version: 0.3.1 */
 angular.module('sentio', []);
 angular.module('sentio.realtime', []);
 angular.module('sentio.realtime').directive('sentioRtTimeline', function($document, $window, $timeout, $log) {
@@ -13,8 +13,7 @@ angular.module('sentio.realtime').directive('sentioRtTimeline', function($docume
 			interval: '=sentioInterval',
 			delay: '=sentioDelay',
 			yExtent: '=sentioYExtent',
-			duration: '=sentioDuration',
-			efficient: '=sentioEfficient',
+			fps: '=sentioFps',
 			resizeWidth: '@sentioResizeWidth',
 			resizeHeight: '@sentioResizeHeight',
 			configure: '&sentioConfigureFn'
@@ -80,17 +79,11 @@ angular.module('sentio.realtime').directive('sentioRtTimeline', function($docume
 				timeline.yExtent(n).redraw();
 			});
 
-			scope.$watch('duration', function(n, o){
+			scope.$watch('fps', function(n, o){
 				if(null == o && null == n){ return; }
 
-				timeline.duration(n);
-			}, true);
-
-			scope.$watch('efficient', function(n, o){
-				if(null == o && null == n){ return; }
-
-				timeline.efficient(n);
-			}, true);
+				timeline.fps(n);
+			});
 
 			// Manage resizing the chart
 			var resizeWidth = (null != attrs.sentioResizeWidth);
@@ -120,7 +113,7 @@ angular.module('sentio.realtime').directive('sentioRtTimeline', function($docume
 				// Reapply the old overflow setting
 				body.style.overflow = overflow;
 
-				console.log('resize rt.timeline height: ' + height + ' width: ' + width);
+				$log.debug('resize rt.timeline height: ' + height + ' width: ' + width);
 
 				// Apply the new width and height
 				if(resizeWidth){ timeline.width(width); }
@@ -261,7 +254,7 @@ angular.module('sentio').directive('sentioTimeline', function($document, $window
 				// Reapply the old overflow setting
 				body.style.overflow = overflow;
 
-				console.log('resize rt.timeline height: ' + height + ' width: ' + width);
+				$log.debug('resize rt.timeline height: ' + height + ' width: ' + width);
 
 				// Apply the new width and height
 				if(resizeWidth){ timeline.width(width); }
